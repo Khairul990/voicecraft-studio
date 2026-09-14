@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>VoiceCraft Studio Pro</title>
+  
+  <!-- Preload & Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link id="dynamic-font" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700;800&family=Montserrat:wght@600;700;800&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Audio Element (hidden) -->
+  <audio id="audioElement" preload="auto"></audio>
+
+  <!-- 5-Second Countdown HUD -->
+  <div id="countdownStage">
+    <div class="cd-number" id="countdownDigit">5</div>
+    <div class="cd-hint">স্ক্রিন রেকর্ডার অন করুন... (Start Screen Recording)</div>
+  </div>
+
+  <!-- Main Broadcast Stage -->
+  <!-- aspect-ratio toggle via class 'ratio-16-9' or 'ratio-9-16' -->
+  <div id="stageContainer" class="ratio-9-16">
+    <div id="studioCanvas" class="theme-gold">
+      <div class="broadcast-frame"></div>
+      <div class="corner-pin cp-tl"></div>
+      <div class="corner-pin cp-tr"></div>
+      <div class="corner-pin cp-bl"></div>
+      <div class="corner-pin cp-br"></div>
+
+      <!-- Top Identity Bar -->
+      <div class="top-brand-bar" id="ui-brand-bar">
+        <div class="brand-identity">
+          <div class="avatar-wrapper">
+            <img id="brand-logo-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23041f12'/><text x='50' y='65' font-size='40' text-anchor='middle' fill='%23ffd700'>VC</text></svg>" alt="Logo">
+          </div>
+          <div class="brand-names">
+            <div class="title-row">
+              <span class="ch-title" id="display-ch-name">VoiceCraft Studio</span>
+              <div class="verify-badge" id="display-verify" style="display: flex;">✓</div>
+            </div>
+            <div class="title-row" style="margin-top: 2px;">
+              <span class="ch-handle" id="display-ch-handle">@voicecraft</span>
+              <span class="badge-hd">4K</span>
+            </div>
+          </div>
+        </div>
+        <div class="headline-wrap">
+          <div class="headline-pill" id="display-headline">Welcome to the Studio</div>
+        </div>
+      </div>
+
+      <!-- Central Subtitle Stage -->
+      <div class="caption-stage">
+        <div class="caption-box" id="captionBox">
+          <!-- Words injected here -->
+        </div>
+      </div>
+
+      <!-- Floating Engagement Bar (Like & Subscribe) -->
+      <div class="bottom-dock" id="ui-dock">
+        <div class="eng-card" id="engagementCard">
+          <div class="sub-capsule">SUBSCRIBE</div>
+          <span class="like-label">👍 LIKE & SHARE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Drawer / Modal -->
+  <div class="setup-drawer" id="setupDrawer">
+    <div class="drawer-handle"></div>
+    <div class="setup-box">
+      <h2>স্টুডিও কন্ট্রোল প্যানেল (Studio Panel)</h2>
+      
+      <!-- Tabs for Settings -->
+      <div class="tabs">
+        <button class="tab-btn active" data-target="tab-media">Media & Timeline</button>
+        <button class="tab-btn" data-target="tab-style">Style & Theme</button>
+        <button class="tab-btn" data-target="tab-brand">Branding</button>
+      </div>
+
+      <!-- Tab: Media & Timeline -->
+      <div class="tab-content active" id="tab-media">
+        <div class="form-unit">
+          <label>1. Audio File (.mp3, .wav):</label>
+          <input type="file" id="audioInput" accept="audio/*">
+        </div>
+        
+        <div class="form-unit">
+          <label>2. Timeline Data (JSON):</label>
+          <div class="timeline-editor-wrapper">
+            <textarea id="timelineInput">[]</textarea>
+          </div>
+        </div>
+        
+        <!-- Audio Calibrator -->
+        <div class="audio-calibrator">
+          <label>Audio Scrubber (Calibrate Time)</label>
+          <div class="scrub-row">
+            <input type="range" id="audioScrubber" min="0" max="100" value="0" step="0.1">
+            <span id="currentTimeDisplay">0.0s</span>
+          </div>
+          <button id="setTimestampBtn" class="sec-btn">Set Current Timestamp in JSON</button>
+        </div>
+      </div>
+
+      <!-- Tab: Style & Theme -->
+      <div class="tab-content" id="tab-style">
+        <div class="form-unit">
+          <label>Aspect Ratio:</label>
+          <select id="ratioSelect">
+            <option value="ratio-9-16">9:16 (Shorts/Reels)</option>
+            <option value="ratio-16-9">16:9 (Landscape)</option>
+          </select>
+        </div>
+        
+        <div class="form-unit">
+          <label>Theme / Animation Style:</label>
+          <select id="themeSelect">
+            <option value="theme-gold">Golden Islamic (Glow)</option>
+            <option value="theme-emerald">Emerald Minimalist</option>
+            <option value="theme-pop">Neon Cyberpunk (Pop)</option>
+            <option value="theme-depth">Monochrome Documentary</option>
+            <option value="theme-clean">Clean Subtitle (Highlight)</option>
+          </select>
+        </div>
+        
+        <div class="form-unit">
+          <label>Font Family:</label>
+          <select id="fontSelect">
+            <option value="Hind Siliguri">Hind Siliguri (Bengali)</option>
+            <option value="Tiro Bangla">Tiro Bangla</option>
+            <option value="Montserrat">Montserrat (English)</option>
+            <option value="Inter">Inter (English)</option>
+          </select>
+        </div>
+        <div class="form-unit">
+          <label>Font Size:</label>
+          <input type="range" id="fontSizeSlider" min="1.0" max="4.0" value="2.0" step="0.1">
+        </div>
+      </div>
+
+      <!-- Tab: Branding -->
+      <div class="tab-content" id="tab-brand">
+        <div class="form-unit">
+          <label>Custom Logo (Image):</label>
+          <input type="file" id="logoInput" accept="image/*">
+        </div>
+        <div class="form-unit">
+          <label>Channel Name:</label>
+          <input type="text" id="chNameInput" value="VoiceCraft Studio">
+        </div>
+        <div class="form-unit">
+          <label>Handle (@):</label>
+          <input type="text" id="chHandleInput" value="@voicecraft">
+        </div>
+        <div class="form-unit check-unit">
+          <input type="checkbox" id="verifyCheck" checked>
+          <label for="verifyCheck">Show Verified Badge</label>
+        </div>
+        <div class="form-unit">
+          <label>Video Headline:</label>
+          <input type="text" id="headlineInput" value="Welcome to the Studio">
+        </div>
+        <div class="form-unit">
+          <label>Subscribe Popup Times (seconds, comma-separated):</label>
+          <input type="text" id="subsInput" value="12.0, 150.0">
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="start-btn" id="startBtn">Start Recording Mode</button>
+        <button class="sec-btn" id="exportBtn">Export Config (JSON)</button>
+      </div>
+      <div class="hint-text">💡 Double-tap stage to Pause/Menu. Single-tap to hide/show UI.</div>
+    </div>
+  </div>
+
+  <script src="ui.js"></script>
+  <script src="engine.js"></script>
+</body>
+</html>
