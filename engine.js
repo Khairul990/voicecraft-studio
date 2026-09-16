@@ -11,6 +11,8 @@ let currentWordIndex = -1;
 let animFrameId = null;
 let isRecording = false;
 
+const modes = ['mode-gold', 'mode-pop', 'mode-emerald', 'mode-luxury', 'mode-amber', 'mode-depth'];
+
 // We'll expose a global launchStudio function to be called from UI
 window.launchStudio = async function(config) {
   // Parse and set data
@@ -28,6 +30,10 @@ window.launchStudio = async function(config) {
   } else if (!audioEl.src) {
     alert("Please select an audio file first.");
     return;
+  }
+
+  if (config.storyTitle) {
+    document.getElementById('display-headline').innerText = config.storyTitle;
   }
 
   // Pre-process timeline into words for finer granularity if needed, 
@@ -58,8 +64,11 @@ window.launchStudio = async function(config) {
   cdStage.style.display = 'flex';
   
   // Try Native Fullscreen
-  if (document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen().catch(err => console.log(err));
+  const el = document.documentElement;
+  if (el.requestFullscreen) {
+    el.requestFullscreen().catch(err => console.log(err));
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen();
   }
   
   let count = 5;
@@ -109,6 +118,13 @@ function syncLoop() {
   if (currentBlockId !== -1 && currentBoxBlock != currentBlockId) {
     renderBlock(currentBlockId);
     captionBox.setAttribute('data-block-id', currentBlockId);
+    
+    const canvas = document.getElementById('studioCanvas');
+    if (canvas.getAttribute('data-theme') === 'mode-dynamic') {
+      const modeIndex = currentBlockId % modes.length;
+      modes.forEach(m => canvas.classList.remove(m));
+      canvas.classList.add(modes[modeIndex]);
+    }
   }
 
   // Active Word Highlight
@@ -174,6 +190,8 @@ window.pauseStudio = function() {
   audioEl.pause();
   if (document.exitFullscreen && document.fullscreenElement) {
     document.exitFullscreen().catch(e => {});
+  } else if (document.webkitExitFullscreen && document.webkitFullscreenElement) {
+    document.webkitExitFullscreen();
   }
 }
 

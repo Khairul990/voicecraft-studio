@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Config Object
   const config = {
     audioFile: null,
+    storyTitle: document.getElementById('storyTitleInput').value,
     timelineText: document.getElementById('timelineInput').value,
     subsTimes: document.getElementById('subsInput').value
   };
@@ -77,7 +78,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('themeSelect').addEventListener('change', (e) => {
-    studioCanvas.className = e.target.value;
+    const theme = e.target.value;
+    studioCanvas.setAttribute('data-theme', theme);
+    const modes = ['mode-gold', 'mode-emerald', 'mode-pop', 'mode-depth', 'mode-luxury', 'mode-amber', 'mode-dynamic'];
+    modes.forEach(m => studioCanvas.classList.remove(m));
+    if (theme !== 'mode-dynamic') {
+      studioCanvas.classList.add(theme);
+    }
   });
 
   const fontSelect = document.getElementById('fontSelect');
@@ -124,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupDrawer.classList.remove('open');
     config.timelineText = document.getElementById('timelineInput').value;
     config.subsTimes = document.getElementById('subsInput').value;
+    config.storyTitle = document.getElementById('storyTitleInput').value;
     window.launchStudio(config);
   });
 
