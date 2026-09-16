@@ -15,6 +15,75 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Timeline Mode Toggle
+  let activeTimelineMode = 'builder';
+  const modeBtns = document.querySelectorAll('.tm-btn');
+  const builderMode = document.getElementById('builderMode');
+  const rawMode = document.getElementById('rawMode');
+
+  modeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      modeBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTimelineMode = btn.dataset.mode;
+      if (activeTimelineMode === 'builder') {
+        builderMode.style.display = 'block';
+        rawMode.style.display = 'none';
+      } else {
+        builderMode.style.display = 'none';
+        rawMode.style.display = 'block';
+      }
+    });
+  });
+
+  // Generate Timeline Blocks
+  const generateBlocksBtn = document.getElementById('generateBlocksBtn');
+  const scriptInput = document.getElementById('scriptInput');
+  const blocksContainer = document.getElementById('timelineBlocksContainer');
+  let currentSyncIndex = 0;
+
+  generateBlocksBtn.addEventListener('click', () => {
+    const lines = scriptInput.value.split('\n').filter(line => line.trim() !== '');
+    if (lines.length === 0) return;
+    
+    blocksContainer.innerHTML = '';
+    currentSyncIndex = 0;
+    
+    lines.forEach((line, idx) => {
+      const block = document.createElement('div');
+      block.className = 't-block';
+      block.innerHTML = `
+        <div class="t-block-idx">${idx + 1}</div>
+        <input type="text" class="t-block-text" value="${line.replace(/"/g, '&quot;')}" />
+        <input type="number" class="t-block-time" step="0.1" value="0.0" />
+        <button class="t-block-sync" data-idx="${idx}">Sync</button>
+      `;
+      blocksContainer.appendChild(block);
+    });
+
+    // Add sync listeners
+    document.querySelectorAll('.t-block-sync').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const timeInput = e.target.previousElementSibling;
+        timeInput.value = window.audioElementRef.currentTime.toFixed(2);
+        e.target.classList.add('synced');
+        e.target.innerText = 'Synced';
+        
+        // Highlight next
+        document.querySelectorAll('.t-block').forEach(b => b.classList.remove('active-sync'));
+        const nextBlock = e.target.parentElement.nextElementSibling;
+        if (nextBlock) {
+          nextBlock.classList.add('active-sync');
+          nextBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    });
+    
+    // Highlight first
+    const firstBlock = blocksContainer.querySelector('.t-block');
+    if (firstBlock) firstBlock.classList.add('active-sync');
+  });
+
   // Config Object
   const config = {
     audioFile: null,
@@ -26,6 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Media
   const audioInput = document.getElementById('audioInput');
   const audioEl = document.getElementById('audioElement');
+  window.audioElementRef = audioEl; // expose for sync buttons
+
   const audioScrubber = document.getElementById('audioScrubber');
   const currentTimeDisplay = document.getElementById('currentTimeDisplay');
   const timelineInput = document.getElementById('timelineInput');
@@ -128,8 +199,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Start Button
   document.getElementById('startBtn').addEventListener('click', () => {
+    // Unlock Audio Context for strict browsers
+    if (audioEl.src) {
+        audioEl.play().then(() => audioEl.pause()).catch(e => {});
+    }
+
     setupDrawer.classList.remove('open');
-    config.timelineText = document.getElementById('timelineInput').value;
+    
+    if (activeTimelineMode === 'builder') {
+      const blocks = document.querySelectorAll('.t-block');
+      if (blocks.length > 0) {
+        // Compile blocks into JSON
+        const compiledData = [];
+        blocks.forEach(block => {
+          const text = block.querySelector('.t-block-text').value;
+          const time = parseFloat(block.querySelector('.t-block-time').value) || 0;
+          compiledData.push({ time, text });
+        });
+        config.timelineText = JSON.stringify(compiledData);
+        // update the raw textarea too just in case
+        document.getElementById('timelineInput').value = JSON.stringify(compiledData, null, 2);
+      } else {
+        // Fallback to Raw JSON if builder is empty
+        config.timelineText = document.getElementById('timelineInput').value;
+      }
+    } else {
+      config.timelineText = document.getElementById('timelineInput').value;
+    }
+    
     config.subsTimes = document.getElementById('subsInput').value;
     config.storyTitle = document.getElementById('storyTitleInput').value;
     window.launchStudio(config);

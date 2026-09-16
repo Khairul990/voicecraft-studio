@@ -371,6 +371,25 @@ html, body {
 .scrub-row input { flex: 1; }
 .scrub-row span { color: var(--gold-core); font-size: 0.8rem; font-family: monospace; min-width: 40px; }
 
+/* Timeline Builder Modes */
+.timeline-mode-toggle { display: flex; gap: 5px; margin-bottom: 10px; border-radius: 8px; background: rgba(0,0,0,0.4); padding: 4px; }
+.tm-btn { flex: 1; background: transparent; border: none; color: #6da387; font-weight: 600; padding: 6px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+.tm-btn.active { background: rgba(255,255,255,0.1); color: var(--gold-core); box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+
+/* Timeline Blocks */
+.blocks-container { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; }
+.blocks-container::-webkit-scrollbar { width: 4px; }
+.blocks-container::-webkit-scrollbar-track { background: transparent; }
+.blocks-container::-webkit-scrollbar-thumb { background: #16462c; border-radius: 4px; }
+.t-block { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+.t-block.active-sync { border-color: var(--gold-core); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); background: rgba(212, 175, 55, 0.05); }
+.t-block-idx { font-size: 0.7rem; color: #6da387; font-weight: 700; min-width: 20px; text-align: center; }
+.t-block-text { flex: 1; background: transparent !important; border: none !important; color: #fff; font-size: 0.8rem; outline: none; padding: 4px !important; }
+.t-block-time { width: 60px; background: rgba(0,0,0,0.5) !important; color: var(--gold-core) !important; font-family: monospace; font-size: 0.75rem !important; text-align: center; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 4px !important; padding: 4px !important; }
+.t-block-sync { background: #16462c; color: #fff; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: background 0.2s; }
+.t-block-sync:hover { background: #1e5a3a; }
+.t-block-sync.synced { background: #72cca1; color: #000; }
+
 .action-row { display: flex; gap: 10px; margin-top: 10px; }
 .start-btn { flex: 2; background: linear-gradient(135deg, #d4af37, #ffd700, #aa820a); color: #020e06; font-size: 1.05rem; font-weight: 800; border: none; padding: 12px; border-radius: 25px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
 .start-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); }
